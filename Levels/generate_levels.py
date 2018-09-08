@@ -1,6 +1,7 @@
 import json
 import random
 import os
+import time
 
 class Cell:
     def __init__(self, index):
@@ -78,7 +79,29 @@ def createListMaze(cells):
             maze[newIndex(cell.index[0])][newIndex(cell.index[1])] = " "
             for link in cell.relativeOutLinks:
                 maze[newIndex(cell.index[0]) + link[0]][newIndex(cell.index[1]) + link[1]] = " "
-    maze[-2][-2] = "E"
     return maze
 
-def getLevelNum(maxCheck = len(os.listdir()))
+
+def getGreatestLevelNum(directoryFiles, check=None):
+    if check is None:
+        check = len(directoryFiles)
+    if f"level_{check}.txt" in directoryFiles:
+        return check
+    elif check < 1:
+        return 0
+    else:
+        return getGreatestLevelNum(directoryFiles, check-1)
+
+
+def createMazeFile(w=10, h=10, newLevelNum=getGreatestLevelNum(os.listdir()) + 1):
+    maze = createListMaze(generateMaze(w, h))
+    maze[-2][-2] = "E"
+    with open(f"level_{newLevelNum}.txt", "w") as f:
+        f.write(json.dumps(maze).replace("],", "],\n"))
+    
+
+def generateMultipleMazeFiles(number):
+    firstLevelNum=getGreatestLevelNum(os.listdir()) + 1
+    print(f"firstLevelNum:{firstLevelNum}")
+    for i in range(number):
+        createMazeFile(newLevelNum=firstLevelNum + i)
